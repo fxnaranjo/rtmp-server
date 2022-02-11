@@ -47,4 +47,4 @@ rm /rtmp-server/scripts/mycron
 
 fecha=$(date);
 
-echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /server/nms-template/activeStreams/active.log
+echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /rtmp-server/scripts/active.log

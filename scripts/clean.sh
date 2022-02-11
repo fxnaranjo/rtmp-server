@@ -1,9 +1,9 @@
 
 
 
-rm -fr /server/clubs/*
+rm -fr /videos/clubs/*
 
-echo "" > /server/stop.log
-echo "" > /server/active.log
+echo "" > /rtmp-server/scripts/stop.log
+echo "" > /rtmp-server/scripts/active.log
 
 echo "DONE CLEAN"
