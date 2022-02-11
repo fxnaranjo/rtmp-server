@@ -18,16 +18,16 @@ fi
 
 
 
-crontab -u apache -l > /server/nms-template/activeStreams/mycron
+crontab -l > /rtmp-server/scripts/mycron
 
-sed -i '/'$1'/d' /server/nms-template/activeStreams/mycron
+sed -i '/'$1'/d' /rtmp-server/scripts/mycron
 
-crontab -u apache /server/nms-template/activeStreams/mycron
+crontab /rtmp-server/scripts/mycron
 
-rm -fr /server/nms-template/activeStreams/mycron
-
-
-mv /server/clubs/$2/$3/$4/* /library/$2
+rm -fr /rtmp-server/scripts/mycron
 
 
-sed -i '/'$1'/d' /server/nms-template/activeStreams/active.log
+mv /videos/clubs/$2/$3/$4/* /library/$2
+
+
+sed -i '/'$1'/d' /rtmp-server/scripts/active.log
