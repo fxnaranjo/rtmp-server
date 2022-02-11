@@ -5,16 +5,16 @@ port2=$4
 tiempo=$5
 user=$6
 
-if [ ! -d /server/clubs/$clubname/$camera/$user ] 
+if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
 
 then
 
-     mkdir -p /server/clubs/$clubname/$camera/$user
-     chmod -R 777 /server/clubs/$clubname/$camera/$user
+     mkdir -p /videos/clubs/$clubname/$camera/$user
+     chmod -R 777 /videos/clubs/$clubname/$camera/$user
 
 fi
 
-videoPath=/server/clubs/$clubname/$camera/$user
+videoPath=/videos/clubs/$clubname/$camera/$user
 
 dockerName=$clubname-$camera-$user
 
@@ -38,12 +38,12 @@ echo Hour:$hour;
 
 
 #write out current crontab
-crontab -u apache -l > /server/nms-template/mycron
+crontab -l > /rtmp-server/scripts/mycron
 #echo new cron into cron file
-echo $minute $hour" * * * sh /server/nms-template/activeStreams/stop.sh" $dockerName $clubname $camera $user" >> /server/nms-template/activeStreams/stop.log" >> /server/nms-template/mycron
+echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $dockerName $clubname $camera $user" >> /rtmp-server/scripts/stop.log" >> /rtmp-server/scripts/mycron
 #install new cron file
-crontab -u apache /server/nms-template/mycron
-rm /server/nms-template/mycron
+crontab /rtmp-server/scripts/mycron
+rm /rtmp-server/scripts/mycron
 
 fecha=$(date);
 
