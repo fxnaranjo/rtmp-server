@@ -40,16 +40,15 @@ finalVideo=$4-$videoTime$extension
 
 newVideo=$4-$videoTime$extension2
 
-echo $finalVideo
-echo $newVideo
-
-mv /videos/clubs/$2/$3/$4/$thefile  /videos/clubs/$2/$3/$4/$finalVideo
+mv /videos/clubs/$2/$3/$4/$theFile  /videos/clubs/$2/$3/$4/$finalVideo
 
 ffmpeg -i $finalVideo -vcodec copy $newVideo
 
 rm -fr $finalVideo
 
-cp $newVideo /library/$2
+cp $newVideo /library/$2/
+
+rm -fr $newVideo
 
 
 sed -i '/'$1'/d' /rtmp-server/scripts/active.log
