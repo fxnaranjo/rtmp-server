@@ -4,9 +4,14 @@ port=$3
 port2=$4
 tiempo=$5
 user=$6
+private=$7
+description=$8
+
+videoTime=$(date +"%d%m%Y%H%M%S");
+
+streamId=$user-$clubname-videoTime;
 
 if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
-
 then
 
      mkdir -p /videos/clubs/$clubname/$camera/$user
@@ -18,13 +23,37 @@ videoPath=/videos/clubs/$clubname/$camera/$user
 
 dockerName=$clubname-$camera-$user
 
-docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
+#docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
 
 
-HOUR_MINUTES=60;
+
+
+#DATABASE ACTIONS
+idCamera=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
+idPlayer=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
+
+echo idCamera:$idCamera;
+echo idPlayer:$idPlayer;
+
+initialTime=$(date +"%m-%d-%Y %H:%M:%S");
+
+streamingUrl="http://streaming.sportpro.tv:"$port2"/hls/stream.m3u8";
+
+insertStatement="INSERT INTO stream.live
+(id, id_camera, id_player, description, initialtime, playingtime, endtime, islive, isprivate, isrecorded, streamingurl, videopath)
+VALUES('"$streamId"',"$idCamera","$id_player",'"$description"','"$initialTime"',"$playingtime",null,true,"$private",true,'"$streamingUrl"',null)";
+
+echo $insertStatement;
+
+#PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c $insertStatement
+
+#####################################################################################################
+
+#HOUR_MINUTES=60;
 EXTRA_MINUTES=5;
 
-COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
+#COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
+COUNTER=$(($tiempo + $EXTRA_MINUTES));
 
 echo Duration:$COUNTER;
 
@@ -40,7 +69,7 @@ echo Hour:$hour;
 #write out current crontab
 crontab -l > /rtmp-server/scripts/mycron
 #echo new cron into cron file
-echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $dockerName $clubname $camera $user" >> /rtmp-server/scripts/stop.log" >> /rtmp-server/scripts/mycron
+echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $dockerName $clubname $camera $user $streamId" >> /rtmp-server/scripts/stop.log" >> /rtmp-server/scripts/mycron
 #install new cron file
 crontab /rtmp-server/scripts/mycron
 rm /rtmp-server/scripts/mycron
