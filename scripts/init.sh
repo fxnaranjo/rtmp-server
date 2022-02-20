@@ -9,7 +9,7 @@ description=$8
 
 videoTime=$(date +"%d%m%Y%H%M%S");
 
-streamId=$user-$clubname-videoTime;
+streamId=$user-$clubname-$videoTime;
 
 if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
 then
@@ -41,7 +41,7 @@ streamingUrl="http://streaming.sportpro.tv:"$port2"/hls/stream.m3u8";
 
 insertStatement="INSERT INTO stream.live
 (id, id_camera, id_player, description, initialtime, playingtime, endtime, islive, isprivate, isrecorded, streamingurl, videopath)
-VALUES('"$streamId"',"$idCamera","$id_player",'"$description"','"$initialTime"',"$playingtime",null,true,"$private",true,'"$streamingUrl"',null)";
+VALUES('"$streamId"',"$idCamera","$idPlayer",'"$description"','"$initialTime"',"$tiempo",null,true,"$private",true,'"$streamingUrl"',null)";
 
 echo $insertStatement;
 
