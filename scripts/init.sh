@@ -23,12 +23,11 @@ videoPath=/videos/clubs/$clubname/$camera/$user
 
 dockerName=$clubname-$camera-$user
 
-#docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
+docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
 
 
 
-
-#DATABASE ACTIONS
+#######################  DATABASE ACTIONS  ##########################
 idCamera=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
 idPlayer=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
@@ -37,17 +36,14 @@ echo idPlayer:$idPlayer;
 
 initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-streamingUrl="http://streaming.sportpro.tv:"$port2"/hls/stream.m3u8";
+streamingUrl="http://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
 
-insertStatement="INSERT INTO stream.live
-(id, id_camera, id_player, description, initialtime, playingtime, endtime, islive, isprivate, isrecorded, streamingurl, videopath)
-VALUES('"$streamId"',"$idCamera","$idPlayer",'"$description"','"$initialTime"',"$tiempo",null,true,"$private",true,'"$streamingUrl"',null)";
 
-echo $insertStatement;
+PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,videopath)
+ VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"',null)"
 
-#PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c $insertStatement
 
-#####################################################################################################
+
 
 #HOUR_MINUTES=60;
 EXTRA_MINUTES=5;
