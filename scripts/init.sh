@@ -65,7 +65,7 @@ echo Hour:$hour;
 #write out current crontab
 crontab -l > /rtmp-server/scripts/mycron
 #echo new cron into cron file
-echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $dockerName $clubname $camera $user $streamId" >> /rtmp-server/scripts/stop.log" >> /rtmp-server/scripts/mycron
+echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $dockerName $clubname $camera $user $streamId >> /rtmp-server/scripts/mycron
 #install new cron file
 crontab /rtmp-server/scripts/mycron
 rm /rtmp-server/scripts/mycron
