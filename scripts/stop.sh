@@ -50,5 +50,16 @@ cp $newVideo /library/$2/
 
 rm -fr $newVideo
 
+googleCloudStorage="https://storage.googleapis.com/jaimepinto-squash/"+$newVideo;
+
+
+
+updateStatement="update STREAM.live set islive = false , videopath='"$googleCloudStorage"' where STREAM.live.id ='"$5"'";
+
+
+echo $updateStatement;
+
+
+#PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c ""
 
 sed -i '/'$1'/d' /rtmp-server/scripts/active.log
