@@ -54,7 +54,7 @@ googleCloudStorage="https://storage.googleapis.com/jaimepinto-squash/"$newVideo;
 
 endTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', endtime='"$endTime"' where STREAM.live.id ='"$5"'"
+PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', endtime='\"$endTime\"' where STREAM.live.id ='"$5"'"
 
 
 sed -i '/'$1'/d' /rtmp-server/scripts/active.log
