@@ -1,5 +1,4 @@
 
-
 echo Shut down streaming Container:$1
 
 docker stop $1
@@ -26,7 +25,7 @@ crontab /rtmp-server/scripts/mycron
 
 rm -fr /rtmp-server/scripts/mycron
 
-cd /videos/clubs/$2/$3/$4
+cd /videos/clubs/$2/$3/$4/$5
 
 theFile=$(ls)
 
@@ -40,7 +39,7 @@ finalVideo=$4-$videoTime$extension
 
 newVideo=$4-$videoTime$extension2
 
-mv /videos/clubs/$2/$3/$4/$theFile  /videos/clubs/$2/$3/$4/$finalVideo
+mv /videos/clubs/$2/$3/$4/$5/$theFile  /videos/clubs/$2/$3/$4/$5/$finalVideo
 
 ffmpeg -i $finalVideo -vcodec copy $newVideo
 
@@ -49,6 +48,10 @@ rm -fr $finalVideo
 cp $newVideo /library/$2/
 
 rm -fr $newVideo
+
+cd /videos/clubs/$2/$3/$4
+
+rm -fr $5
 
 googleCloudStorage="https://storage.googleapis.com/jaimepinto-squash/"$newVideo;
 

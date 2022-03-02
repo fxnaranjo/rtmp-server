@@ -19,7 +19,20 @@ then
 
 fi
 
-videoPath=/videos/clubs/$clubname/$camera/$user
+
+if [ ! -d /videos/clubs/$clubname/$camera/$user/$streamId ]
+then
+
+     mkdir -p /videos/clubs/$clubname/$camera/$user/$streamId
+     chmod -R 777 /videos/clubs/$clubname/$camera/$user/$streamId
+
+fi
+
+
+
+
+
+videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
 
 dockerName=$clubname-$camera-$user
 
@@ -46,7 +59,7 @@ PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSER
 
 
 #HOUR_MINUTES=60;
-EXTRA_MINUTES=5;
+EXTRA_MINUTES=1;
 
 #COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
 COUNTER=$(($tiempo + $EXTRA_MINUTES));
