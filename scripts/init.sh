@@ -49,7 +49,7 @@ echo idPlayer:$idPlayer;
 
 initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-streamingUrl="http://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
+streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
 
 
 PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,videopath)
