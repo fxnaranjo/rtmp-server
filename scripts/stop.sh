@@ -53,7 +53,7 @@ cd /videos/clubs/$2/$3/$4
 
 rm -fr $5
 
-googleCloudStorage="https://storage.googleapis.com/jaimepinto-squash/"$newVideo;
+googleCloudStorage="https://storage.googleapis.com/"$2"/"$newVideo;
 
 endTime=$(date +"%m-%d-%Y %H:%M:%S");
 
