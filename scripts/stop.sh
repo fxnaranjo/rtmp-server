@@ -26,7 +26,7 @@ fi
 
 crontab -l > /rtmp-server/scripts/mycron
 
-sed -i '/'$dockerName'/d' /rtmp-server/scripts/mycron
+sed -i '/'$record'/d' /rtmp-server/scripts/mycron
 
 crontab /rtmp-server/scripts/mycron
 
