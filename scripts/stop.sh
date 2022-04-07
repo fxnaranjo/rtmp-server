@@ -1,17 +1,24 @@
 
 echo Shut down streaming Container:$1
 
-docker stop $1
+clubname=$1
+camera=$2
+user=$3
+record=$4
 
-docker rm $1
+dockerName=$clubname-$camera-$user
+
+docker stop $dockerName
+
+docker rm $dockerName
 
 echo "**************************************************************"
 
-if [ ! -d /library/$2 ]
+if [ ! -d /library/$clubname ]
 
 then
 
-     mkdir -p /library/$2
+     mkdir -p /library/$clubname
 
 fi
 
@@ -19,13 +26,13 @@ fi
 
 crontab -l > /rtmp-server/scripts/mycron
 
-sed -i '/'$1'/d' /rtmp-server/scripts/mycron
+sed -i '/'$dockerName'/d' /rtmp-server/scripts/mycron
 
 crontab /rtmp-server/scripts/mycron
 
 rm -fr /rtmp-server/scripts/mycron
 
-cd /videos/clubs/$2/$3/$4/$5
+cd /videos/clubs/$clubname/$camera/$user/$record
 
 theFile=$(ls)
 
@@ -39,25 +46,25 @@ finalVideo=$4-$videoTime$extension
 
 newVideo=$4-$videoTime$extension2
 
-mv /videos/clubs/$2/$3/$4/$5/$theFile  /videos/clubs/$2/$3/$4/$5/$finalVideo
+mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
 
 ffmpeg -i $finalVideo -vcodec copy $newVideo
 
 rm -fr $finalVideo
 
-cp $newVideo /library/$2/
+cp $newVideo /library/$clubname/
 
 rm -fr $newVideo
 
-cd /videos/clubs/$2/$3/$4
+cd /videos/clubs/$clubname/$camera/$user
 
-rm -fr $5
+rm -fr $record
 
-googleCloudStorage="https://storage.googleapis.com/"$2"/"$newVideo;
+googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
 
 endTime=$(date +"%m-%d-%Y %H:%M:%S");
 
 PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', endtime='\"$endTime\"' where STREAM.live.id ='"$5"'"
 
 
-sed -i '/'$1'/d' /rtmp-server/scripts/active.log
+sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
