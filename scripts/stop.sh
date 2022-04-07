@@ -42,9 +42,9 @@ extension2=".mp4"
 
 videoTime=$(date +"%d%m%Y%H%M%S")
 
-finalVideo=$4-$videoTime$extension
+finalVideo=$user-$videoTime$extension
 
-newVideo=$4-$videoTime$extension2
+newVideo=$user-$videoTime$extension2
 
 mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
 
