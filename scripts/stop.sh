@@ -10,9 +10,18 @@ dockerName=$clubname-$camera-$user
 
 isValid=$(docker stop $dockerName)
 
+crontab -l > /rtmp-server/scripts/mycron
+
+sed -i '/'$record'/d' /rtmp-server/scripts/mycron
+
+crontab /rtmp-server/scripts/mycron
+
+rm -fr /rtmp-server/scripts/mycron
+
+
 echo Valid:$isValid
 
-if [ "$name" != "" ]; then
+if [ "$isValid" != "" ]; then
 
 docker rm $dockerName
 
@@ -27,14 +36,6 @@ then
 fi
 
 
-
-crontab -l > /rtmp-server/scripts/mycron
-
-sed -i '/'$record'/d' /rtmp-server/scripts/mycron
-
-crontab /rtmp-server/scripts/mycron
-
-rm -fr /rtmp-server/scripts/mycron
 
 cd /videos/clubs/$clubname/$camera/$user/$record
 
