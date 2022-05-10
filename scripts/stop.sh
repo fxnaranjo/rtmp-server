@@ -12,7 +12,7 @@ isValid=$(docker stop $dockerName)
 
 echo Valid:$isValid
 
-if [ "$name" != "" ] then
+if [ "$name" != "" ]; then
 
 docker rm $dockerName
 
