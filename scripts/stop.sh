@@ -10,7 +10,7 @@ dockerName=$clubname-$camera-$user
 
 isValid=$(docker stop $dockerName)
 
-echo $isValid
+echo Valid:$isValid
 
 docker rm $dockerName
 
