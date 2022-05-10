@@ -79,9 +79,13 @@ if [ "$theFile" != "" ]; then
 
 else
     echo "No video available"
+    cd /videos/clubs/$clubname/$camera/$user
+    rm -fr $record
     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
 fi
 
 else
     echo "No container available"
+    cd /videos/clubs/$clubname/$camera/$user
+     rm -fr $record
 fi
