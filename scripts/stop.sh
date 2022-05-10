@@ -12,6 +12,8 @@ isValid=$(docker stop $dockerName)
 
 echo Valid:$isValid
 
+if [ "$name" != "" ] then
+
 docker rm $dockerName
 
 echo "***************************************************************"
@@ -70,3 +72,7 @@ PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDAT
 
 
 sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
+
+else
+    echo "No container available"
+fi
