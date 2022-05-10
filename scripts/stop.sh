@@ -9,6 +9,7 @@ record=$4
 dockerName=$clubname-$camera-$user
 
 isValid=$(docker stop $dockerName)
+docker rm $dockerName
 
 crontab -l > /rtmp-server/scripts/mycron
 
@@ -23,7 +24,7 @@ echo Valid:$isValid
 
 if [ "$isValid" != "" ]; then
 
-docker rm $dockerName
+
 
 echo "***************************************************************"
 
