@@ -40,38 +40,45 @@ cd /videos/clubs/$clubname/$camera/$user/$record
 
 theFile=$(ls)
 
-extension=".flv"
+if [ "$theFile" != "" ]; then
 
-extension2=".mp4"
+     extension=".flv"
 
-videoTime=$(date +"%d%m%Y%H%M%S")
+     extension2=".mp4"
 
-finalVideo=$user-$videoTime$extension
+     videoTime=$(date +"%d%m%Y%H%M%S")
 
-newVideo=$user-$videoTime$extension2
+     finalVideo=$user-$videoTime$extension
 
-mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
+     newVideo=$user-$videoTime$extension2
 
-ffmpeg -i $finalVideo -vcodec copy $newVideo
+     mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
 
-rm -fr $finalVideo
+     ffmpeg -i $finalVideo -vcodec copy $newVideo
 
-cp $newVideo /library/$clubname/
+     rm -fr $finalVideo
 
-rm -fr $newVideo
+     cp $newVideo /library/$clubname/
 
-cd /videos/clubs/$clubname/$camera/$user
+     rm -fr $newVideo
 
-rm -fr $record
+     cd /videos/clubs/$clubname/$camera/$user
 
-googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
+     rm -fr $record
 
-endTime=$(date +"%m-%d-%Y %H:%M:%S");
+     googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
 
-PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
+     endTime=$(date +"%m-%d-%Y %H:%M:%S");
+
+     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
 
 
-sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
+     sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
+
+else
+    echo "No video available"
+    PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
+fi
 
 else
     echo "No container available"
