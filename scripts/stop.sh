@@ -8,7 +8,9 @@ record=$4
 
 dockerName=$clubname-$camera-$user
 
-docker stop $dockerName
+isValid=$(docker stop $dockerName)
+
+echo $isValid
 
 docker rm $dockerName
 
