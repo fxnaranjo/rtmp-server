@@ -56,6 +56,10 @@ PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSER
  VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"',null)"
 
 
+ PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
+ VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"'"
+
+
 
 
 #HOUR_MINUTES=60;

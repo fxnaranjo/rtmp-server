@@ -94,6 +94,7 @@ if [ "$theFile" != "" ]; then
 
      PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', photopath='"$googleCloudStorage2"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
 
+     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 
      sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
 
@@ -102,10 +103,13 @@ else
     cd /videos/clubs/$clubname/$camera/$user
     rm -fr $record
     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
+    PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
 
 else
-    echo "No container available"
-    cd /videos/clubs/$clubname/$camera/$user
+     echo "No container available"
+     cd /videos/clubs/$clubname/$camera/$user
      rm -fr $record
+     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
+     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
