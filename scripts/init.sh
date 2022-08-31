@@ -1,3 +1,4 @@
+
 clubname=$1
 camera=$2
 port=$3
@@ -33,6 +34,7 @@ fi
 
 
 videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
+photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
 
 dockerName=$clubname-$camera-$user
 
@@ -52,14 +54,12 @@ initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
 
 
-PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,videopath)
- VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"',null)"
+PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
+ VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"','"$photoPath"',null)"
 
 
- PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
- VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"'"
-
-
+PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
+VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"')";
 
 
 #HOUR_MINUTES=60;
@@ -82,7 +82,7 @@ echo Hour:$hour;
 #write out current crontab
 crontab -l > /rtmp-server/scripts/mycron
 #echo new cron into cron file
-echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $clubname $camera $user $streamId >> /rtmp-server/scripts/mycron
+echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $clubname $camera $user $streamId $COUNTER >> /rtmp-server/scripts/mycron
 #install new cron file
 crontab /rtmp-server/scripts/mycron
 rm /rtmp-server/scripts/mycron

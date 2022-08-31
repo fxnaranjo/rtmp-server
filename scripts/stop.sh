@@ -5,6 +5,9 @@ clubname=$1
 camera=$2
 user=$3
 record=$4
+tiempo=$5
+
+tiempo=$(($tiempo-2))
 
 dockerName=$clubname-$camera-$user
 
@@ -22,7 +25,8 @@ rm -fr /rtmp-server/scripts/mycron
 
 echo Valid:$isValid
 
-if [ "$isValid" != "" ]; then
+if [ "$isValid" != "" ]
+then
 
 
 
@@ -40,9 +44,45 @@ fi
 
 cd /videos/clubs/$clubname/$camera/$user/$record
 
-theFile=$(ls)
+numFiles=$(ls -l | wc -l)
 
-if [ "$theFile" != "" ]; then
+echo "NumFiles:"$numFiles
+
+theFile="myfile"
+
+STRLENGTH=$(echo -n $tiempo | wc -m)
+
+if [ $STRLENGTH -eq 1 ]
+then
+   tiempo="0"$tiempo
+else
+ echo "Time is right"
+
+fi
+
+
+mycase="normal"
+
+snipTime="00:"$tiempo":00"
+
+echo $snipTime
+
+if [ $numFiles -ne 2 ]
+then
+    theFile=$(du -sh * | sort -rh | head -1 | awk '{print $2}')
+    mv $theFile auxVideo.flv
+    ffmpeg -i auxVideo.flv -map 0 -ss 00:00:00 -to $snipTime -c copy thevideo2.mp4
+    theFile=thevideo2.mp4
+    mycase="excp"
+else
+    theFile=$(ls)
+fi
+
+echo ".............THE FILE............"
+echo $theFile
+
+if [ "$theFile" != "" ]
+then
 
      extension=".flv"
 
@@ -58,33 +98,33 @@ if [ "$theFile" != "" ]; then
 
      newPhoto=$user-$videoTime$extension3
 
-#     newVideoWlogo=$user-$videoTime$extension2
 
      mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
+      
+     echo "Flag:"$mycase
 
-     ffmpeg -i $finalVideo -vcodec copy $newVideo
+     if [ "$mycase" = "normal" ];
+     then
+	 echo "Normal processing"
+         ffmpeg -i $finalVideo -vcodec copy $newVideo
+     else
+	 echo "Just change name, mp4 already created"
+	 cp $finalVideo $newVideo
+     fi
 
- #    ffmpeg -i $newVideo -i logo.png -filter_complex "overlay=1:1" $newVideoWlogo
+     ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
-     ffmpeg -i $finalVideo -r 1 -ss 00:01:00 -vf scale=320:180 -t 1 $newPhoto
-
-     rm -fr $finalVideo
+  #   rm -fr $finalVideo
 
      cp $newVideo /library/$clubname/
-
      cp $newPhoto /library/$clubname/
 
-   #  cp $newVideoWlogo /library/$clubname/
-
-     rm -fr $newVideo
-
-     rm -fr $newPhoto
-
-  #   rm -fr $newVideoWlogo
+  #  rm -fr $newVideo
+  #  rm -fr $newPhoto
 
      cd /videos/clubs/$clubname/$camera/$user
 
-     rm -fr $record
+ #    rm -fr $record
 
      googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
 
@@ -95,6 +135,7 @@ if [ "$theFile" != "" ]; then
      PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', photopath='"$googleCloudStorage2"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
 
      PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+
 
      sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
 
@@ -107,9 +148,9 @@ else
 fi
 
 else
-     echo "No container available"
-     cd /videos/clubs/$clubname/$camera/$user
-     rm -fr $record
-     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
-     PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+    echo "No container available"
+    cd /videos/clubs/$clubname/$camera/$user
+    rm -fr $record
+    PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
+    PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
