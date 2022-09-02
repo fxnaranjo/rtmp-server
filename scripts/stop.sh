@@ -57,6 +57,16 @@ echo "NumFiles:"$numFiles
 
 theFile="myfile"
 
+hora=0
+sobrante=0
+
+if [ $tiempo -gt 60 ]
+then
+   hora=1
+   sobrante=$(($tiempo-60))
+   tiempo=sobrante
+fi
+
 STRLENGTH=$(echo -n $tiempo | wc -m)
 
 if [ $STRLENGTH -eq 1 ]
@@ -68,11 +78,13 @@ else
 fi
 
 
+
+
 mycase="normal"
 
-snipTime="00:"$tiempo":00"
+snipTime="0$hora:"$tiempo":00"
 
-echo $snipTime
+echo "SnipTime:"$snipTime
 
 if [ $numFiles -ne 2 ]
 then
