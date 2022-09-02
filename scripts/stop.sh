@@ -64,7 +64,7 @@ if [ $tiempo -gt 60 ]
 then
    hora=1
    sobrante=$(($tiempo-60))
-   tiempo=sobrante
+   tiempo=$sobrante
 fi
 
 STRLENGTH=$(echo -n $tiempo | wc -m)
