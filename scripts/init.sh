@@ -36,6 +36,7 @@ idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d spo
 
 
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_camera='$idCamera)
 
 if [ "$idLive" = "" ]
 then
