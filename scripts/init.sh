@@ -34,8 +34,6 @@ fi
 idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
 idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
-echo idCamera:$idCamera;
-echo idPlayer:$idPlayer;
 
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
 
@@ -68,15 +66,9 @@ then
           #COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
           COUNTER=$(($tiempo + $EXTRA_MINUTES));
 
-          echo Duration:$COUNTER;
-
 
           minute=$( date --date='+'$COUNTER' minutes' +"%M" );
           hour=$( date --date='+'$COUNTER' minutes' +"%H" );
-
-
-          echo Minute:$minute;
-          echo Hour:$hour;
 
 
           #write out current crontab
