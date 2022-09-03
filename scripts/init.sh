@@ -43,50 +43,61 @@ docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvide
 
 
 #######################  DATABASE ACTIONS  ##########################
-idCamera=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
-idPlayer=$(PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
+idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
+idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
 echo idCamera:$idCamera;
 echo idPlayer:$idPlayer;
 
-initialTime=$(date +"%m-%d-%Y %H:%M:%S");
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
 
-streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
+if [ "$idLive" = "" ]
+then
 
+          initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
- VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"','"$photoPath"',null)"
-
-
-PGPASSWORD=acetv2022 psql -h 10.70.208.3 -A -t -U acetvdev -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
-VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"')";
+          streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
 
 
-#HOUR_MINUTES=60;
-EXTRA_MINUTES=1;
-
-#COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
-COUNTER=$(($tiempo + $EXTRA_MINUTES));
-
-echo Duration:$COUNTER;
+          PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
+          VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"','"$photoPath"',null)"
 
 
-minute=$( date --date='+'$COUNTER' minutes' +"%M" );
-hour=$( date --date='+'$COUNTER' minutes' +"%H" );
+          PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
+          VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"')";
 
 
-echo Minute:$minute;
-echo Hour:$hour;
+          #HOUR_MINUTES=60;
+          EXTRA_MINUTES=1;
+
+          #COUNTER=$(($tiempo * $HOUR_MINUTES + $EXTRA_MINUTES));
+          COUNTER=$(($tiempo + $EXTRA_MINUTES));
+
+          echo Duration:$COUNTER;
 
 
-#write out current crontab
-crontab -l > /rtmp-server/scripts/mycron
-#echo new cron into cron file
-echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $clubname $camera $user $streamId $COUNTER >> /rtmp-server/scripts/mycron
-#install new cron file
-crontab /rtmp-server/scripts/mycron
-rm /rtmp-server/scripts/mycron
+          minute=$( date --date='+'$COUNTER' minutes' +"%M" );
+          hour=$( date --date='+'$COUNTER' minutes' +"%H" );
 
-fecha=$(date);
 
-echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /rtmp-server/scripts/active.log
+          echo Minute:$minute;
+          echo Hour:$hour;
+
+
+          #write out current crontab
+          crontab -l > /rtmp-server/scripts/mycron
+          #echo new cron into cron file
+          echo $minute $hour" * * * sh /rtmp-server/scripts/stop.sh" $clubname $camera $user $streamId $COUNTER >> /rtmp-server/scripts/mycron
+          #install new cron file
+          crontab /rtmp-server/scripts/mycron
+          rm /rtmp-server/scripts/mycron
+
+          fecha=$(date);
+
+          echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /rtmp-server/scripts/active.log
+
+else
+
+          echo "Video Rejected because user is already active"$user >> /rtmp-server/scripts/rejected.log
+
+fi

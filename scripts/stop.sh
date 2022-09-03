@@ -133,13 +133,13 @@ then
 
      ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
-  #   rm -fr $finalVideo
+     rm -fr $finalVideo
 
      cp $newVideo /library/$clubname/
      cp $newPhoto /library/$clubname/
 
-  #  rm -fr $newVideo
-  #  rm -fr $newPhoto
+    rm -fr $newVideo
+    rm -fr $newPhoto
 
      cd /videos/clubs/$clubname/$camera/$user
 
