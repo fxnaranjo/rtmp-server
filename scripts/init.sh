@@ -30,18 +30,6 @@ then
 fi
 
 
-
-
-
-videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
-photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
-
-dockerName=$clubname-$camera-$user
-
-docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
-
-
-
 #######################  DATABASE ACTIONS  ##########################
 idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
 idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
@@ -53,6 +41,13 @@ idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sport
 
 if [ "$idLive" = "" ]
 then
+
+          videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
+          photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
+
+          dockerName=$clubname-$camera-$user
+
+          docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
 
           initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
@@ -98,6 +93,9 @@ then
 
 else
 
-          echo "Video Rejected because user is already active"$user >> /rtmp-server/scripts/rejected.log
+          fecha=$(date);
+          echo $fecha "Video Rejected because user is already active:"$user >> /rtmp-server/scripts/rejected.log
+          echo "nook";
+
 
 fi
