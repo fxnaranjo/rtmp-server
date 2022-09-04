@@ -9,9 +9,29 @@ tiempo=$5
 
 
 
+
 if [ "$tiempo" = "" ]
 then
-	tiempo=3
+	tiempo=40
+    initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
+    actualTime=$(date +"%Y-%m-%d %H:%M:%S");
+
+    echo "InitialTime:"$initialTime
+    echo "actualTime:"$actualTime
+
+    StartDate=$(date -u -d "$initialTime" +"%s")
+    FinalDate=$(date -u -d "$actualTime" +"%s")
+    MINUTES=$(( ($FinalDate - $StartDate) / 60 ))
+  
+    tiempo=$MINUTES
+
+    echo "Tiempo:"$tiempo
+
+    if [ $tiempo -eq 0 ]
+    then
+        tiempo=1
+    fi
+    
 fi
 
 tiempo=$(($tiempo-2))
@@ -77,9 +97,6 @@ else
 
 fi
 
-
-
-
 mycase="normal"
 
 snipTime="0$hora:"$tiempo":00"
@@ -88,8 +105,13 @@ echo "SnipTime:"$snipTime
 
 if [ $numFiles -ne 2 ]
 then
+    echo "This video have multiple files" > fix.log
+    ls -ltr >> fix.log
     theFile=$(du -sh * | sort -rh | head -1 | awk '{print $2}')
+    echo $theFile >> fix.log
+    echo $snipTime >> fix.log
     mv $theFile auxVideo.flv
+    rm -fr stream-*
     ffmpeg -i auxVideo.flv -map 0 -ss 00:00:00 -to $snipTime -c copy thevideo2.mp4
     theFile=thevideo2.mp4
     mycase="excp"
@@ -127,6 +149,7 @@ then
 	 echo "Normal processing"
          ffmpeg -i $finalVideo -vcodec copy $newVideo
      else
+	 echo "changing video name" >> fix.log    
 	 echo "Just change name, mp4 already created"
 	 cp $finalVideo $newVideo
      fi

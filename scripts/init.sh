@@ -46,7 +46,7 @@ then
 
           dockerName=$clubname-$camera-$user
 
-          docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1
+          docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1 >> /dev/null
 
           initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
@@ -68,8 +68,10 @@ then
           COUNTER=$(($tiempo + $EXTRA_MINUTES));
 
 
+
           minute=$( date --date='+'$COUNTER' minutes' +"%M" );
           hour=$( date --date='+'$COUNTER' minutes' +"%H" );
+
 
 
           #write out current crontab
@@ -92,3 +94,4 @@ else
 
 
 fi
+
