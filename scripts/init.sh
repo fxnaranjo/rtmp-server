@@ -12,24 +12,6 @@ videoTime=$(date +"%d%m%Y%H%M%S");
 
 streamId=$user-$clubname-$videoTime;
 
-if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
-then
-
-     mkdir -p /videos/clubs/$clubname/$camera/$user
-     chmod -R 777 /videos/clubs/$clubname/$camera/$user
-
-fi
-
-
-if [ ! -d /videos/clubs/$clubname/$camera/$user/$streamId ]
-then
-
-     mkdir -p /videos/clubs/$clubname/$camera/$user/$streamId
-     chmod -R 777 /videos/clubs/$clubname/$camera/$user/$streamId
-
-fi
-
-
 #######################  DATABASE ACTIONS  ##########################
 idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
 idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
@@ -40,6 +22,23 @@ idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sport
 
 if [ "$idLive" = "" ]
 then
+
+          if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
+          then
+
+               mkdir -p /videos/clubs/$clubname/$camera/$user
+               chmod -R 777 /videos/clubs/$clubname/$camera/$user
+
+          fi
+
+
+          if [ ! -d /videos/clubs/$clubname/$camera/$user/$streamId ]
+          then
+
+               mkdir -p /videos/clubs/$clubname/$camera/$user/$streamId
+               chmod -R 777 /videos/clubs/$clubname/$camera/$user/$streamId
+
+          fi
 
           videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
           photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
@@ -89,7 +88,7 @@ then
 else
 
           fecha=$(date);
-          echo $fecha "Video Rejected because user is already active:"$user >> /rtmp-server/scripts/rejected.log
+          echo $fecha "Video Rejected because user is already active:"$user $streamId >> /rtmp-server/scripts/rejected.log
           echo "nook";
 
 

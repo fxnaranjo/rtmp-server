@@ -7,12 +7,16 @@ user=$3
 record=$4
 tiempo=$5
 
+cd /videos/clubs/$clubname/$camera/$user/$record
 
-
+echo "*************************************************************************************************" >> stop.log
+echo "Record:"$record >> stop.log
+echo "Tiempo:"$tiempo >> stop.log
 
 if [ "$tiempo" = "" ]
 then
-	tiempo=40
+    echo "Stop Type: manualStop" >> stop.log
+    tiempo=40
     initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
     actualTime=$(date +"%Y-%m-%d %H:%M:%S");
 
@@ -31,10 +35,14 @@ then
     then
         tiempo=1
     fi
-    
+else
+    echo "Stop Type: normalStop" >> stop.log
 fi
 
-tiempo=$(($tiempo-2))
+
+echo "Tiempo despues de calculo:"$tiempo >> stop.log
+
+
 
 dockerName=$clubname-$camera-$user
 
@@ -50,35 +58,25 @@ crontab /rtmp-server/scripts/mycron
 rm -fr /rtmp-server/scripts/mycron
 
 
-echo Valid:$isValid
+echo "Valid:"$isValid >> stop.log
 
 if [ "$isValid" != "" ]
 then
 
 
-
-echo "***************************************************************"
-
-if [ ! -d /library/$clubname ]
-
-then
-
-     mkdir -p /library/$clubname
-
-fi
-
-
-
-cd /videos/clubs/$clubname/$camera/$user/$record
-
 numFiles=$(ls -l | wc -l)
 
-echo "NumFiles:"$numFiles
+echo "NumFiles:"$numFiles >> stop.log
 
 theFile="myfile"
 
 hora=0
 sobrante=0
+
+if [ $numFiles -ne 3 ]
+then
+ tiempo=$(($tiempo-2))
+fi
 
 if [ $tiempo -gt 60 ]
 then
@@ -101,26 +99,28 @@ mycase="normal"
 
 snipTime="0$hora:"$tiempo":00"
 
-echo "SnipTime:"$snipTime
+echo "SnipTime:"$snipTime >> stop.log
 
-if [ $numFiles -ne 2 ]
+if [ $numFiles -ne 3 ]
 then
-    echo "This video have multiple files" > fix.log
+    echo "This video have multiple flv files" > fix.log
+    echo "This video have multiple flv files" >> stop.log
     ls -ltr >> fix.log
     theFile=$(du -sh * | sort -rh | head -1 | awk '{print $2}')
     echo $theFile >> fix.log
     echo $snipTime >> fix.log
     mv $theFile auxVideo.flv
-    rm -fr stream-*
+  #  rm -fr stream-*
     ffmpeg -i auxVideo.flv -map 0 -ss 00:00:00 -to $snipTime -c copy thevideo2.mp4
     theFile=thevideo2.mp4
     mycase="excp"
 else
-    theFile=$(ls)
+    theFile=$(ls stream*)
+    echo "This video have only one flv file" >> stop.log
 fi
 
-echo ".............THE FILE............"
-echo $theFile
+echo ".............THE FILE............" >> stop.log
+echo $theFile >> stop.log
 
 if [ "$theFile" != "" ]
 then
@@ -142,31 +142,28 @@ then
 
      mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
       
-     echo "Flag:"$mycase
+     echo "Flag:"$mycase >> stop.log
 
-     if [ "$mycase" = "normal" ];
+     if [ "$mycase" = "normal" ]
      then
-	 echo "Normal processing"
+	 echo "Normal processing" >> stop.log
          ffmpeg -i $finalVideo -vcodec copy $newVideo
      else
 	 echo "changing video name" >> fix.log    
-	 echo "Just change name, mp4 already created"
+	 echo "Just change name, mp4 already created" >> stop.log
 	 cp $finalVideo $newVideo
      fi
 
      ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
-     rm -fr $finalVideo
+   #  rm -fr $finalVideo
 
      cp $newVideo /library/$clubname/
      cp $newPhoto /library/$clubname/
 
-    rm -fr $newVideo
-    rm -fr $newPhoto
+     rm -fr $newVideo
+     rm -fr $newPhoto
 
-     cd /videos/clubs/$clubname/$camera/$user
-
- #    rm -fr $record
 
      googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
 
@@ -176,10 +173,17 @@ then
 
      PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', photopath='"$googleCloudStorage2"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
 
+     echo "TABLE LIVE UPDATED" >> stop.log
+
      PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+
+     echo "TABLE LIVE2 RECORD DELETED" >> stop.log
 
 
      sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
+
+     echo "FINISHED STOP SCRIPT PROCESSING" >> stop.log
+     echo "*************************************************************************************************" >> stop.log
 
 else
     echo "No video available"
@@ -196,3 +200,5 @@ else
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
+
+
