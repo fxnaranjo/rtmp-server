@@ -20,8 +20,8 @@ then
     initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
     actualTime=$(date +"%Y-%m-%d %H:%M:%S");
 
-    echo "InitialTime:"$initialTime
-    echo "actualTime:"$actualTime
+    echo "InitialTime:"$initialTime >> stop.log
+    echo "actualTime:"$actualTime >> stop.log
 
     StartDate=$(date -u -d "$initialTime" +"%s")
     FinalDate=$(date -u -d "$actualTime" +"%s")
@@ -73,7 +73,7 @@ theFile="myfile"
 hora=0
 sobrante=0
 
-if [ $numFiles -ne 3 ]
+if [ $numFiles -ne 3 ] && [ $tiempo -gt 2 ]
 then
  tiempo=$(($tiempo-2))
 fi
