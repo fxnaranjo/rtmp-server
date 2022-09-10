@@ -9,6 +9,10 @@ tiempo=$5
 
 cd /videos/clubs/$clubname/$camera/$user/$record
 
+numFilesVal=$(ls -l | wc -l)
+
+
+
 echo "*************************************************************************************************" >> stop.log
 echo "Record:"$record >> stop.log
 echo "Tiempo:"$tiempo >> stop.log
@@ -122,7 +126,7 @@ fi
 echo ".............THE FILE............" >> stop.log
 echo $theFile >> stop.log
 
-if [ "$theFile" != "" ]
+if [ "$theFile" != "" ] && [ $numFilesVal -ne 1 ]
 then
 
      extension=".flv"
@@ -156,7 +160,7 @@ then
 
      ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
-   #  rm -fr $finalVideo
+    rm -fr $finalVideo
 
      cp $newVideo /library/$clubname/
      cp $newPhoto /library/$clubname/
@@ -186,17 +190,13 @@ then
      echo "*************************************************************************************************" >> stop.log
 
 else
-    echo "No video available"
-    cd /videos/clubs/$clubname/$camera/$user
-    rm -fr $record
+    echo "No video available" >> stop.log
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
 
 else
-    echo "No container available"
-    cd /videos/clubs/$clubname/$camera/$user
-    rm -fr $record
+    echo "No container available" >> stop.log
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
     PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 fi
