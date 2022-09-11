@@ -217,6 +217,7 @@ else
 
         echo "Stop Type: manualStop" >> stop.log
         echo "No hay registro el tabla live 2" >> stop.log
+        echo "*************************************************************************************************" >> stop.log
 
 fi
 
