@@ -17,6 +17,9 @@ echo "**************************************************************************
         echo "Fecha:"$myTime >> stop.log
         echo "Record:"$record >> stop.log
         echo "Tiempo:"$tiempo >> stop.log
+        echo "..........INITIAL DIRECTORY FILES......................................................" >> stop.log
+            ls -ltr >> stop.log
+        echo "......................................................................................." >> stop.log
 
 #######################  DATABASE ACTIONS  ##########################
 
@@ -171,13 +174,13 @@ then
             cp $finalVideo $newVideo
             fi
 
-            echo "Creating Photo:"$newPhoto
+            echo "Creating Photo:"$newPhoto >> stop.log
             ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
 
-            echo "........................................................."
+            echo "....................................................................................." >> stop.log
             ls -ltr >> stop.log
-            echo "........................................................."
+            echo "....................................................................................." >> stop.log
             
             rm -fr $finalVideo
 
