@@ -173,6 +173,10 @@ then
 
             ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
+            echo "........................................................."
+            ls -ltr >> fix.log
+            echo "........................................................."
+            
             rm -fr $finalVideo
 
             cp $newVideo /library/$clubname/
