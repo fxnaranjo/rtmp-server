@@ -11,13 +11,18 @@ cd /videos/clubs/$clubname/$camera/$user/$record
 
 numFilesVal=$(ls -l | wc -l)
 
+ myTime=$(date +"%m-%d-%Y %H:%M:%S");
+
 echo "*************************************************************************************************" >> stop.log
+        echo "Fecha:"$myTime >> stop.log
         echo "Record:"$record >> stop.log
         echo "Tiempo:"$tiempo >> stop.log
 
 #######################  DATABASE ACTIONS  ##########################
 
-idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.liveid from stream.live2 l where l.liveid'"$record"'")
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.liveid from stream.live2 l where l.liveid='"$record"'")
+
+echo "idLive:"$idLive >> stop.log
 
 if [ "$idLive" != "" ]
 then
@@ -210,7 +215,8 @@ then
         fi
 else
 
-echo "No hay registro el tabla live 2" >> stop.log
+        echo "Stop Type: manualStop" >> stop.log
+        echo "No hay registro el tabla live 2" >> stop.log
 
 fi
 
