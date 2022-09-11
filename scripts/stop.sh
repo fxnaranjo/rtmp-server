@@ -114,8 +114,9 @@ then
     echo $theFile >> fix.log
     echo $snipTime >> fix.log
     mv $theFile auxVideo.flv
-  #  rm -fr stream-*
+    rm -fr stream-*
     ffmpeg -i auxVideo.flv -map 0 -ss 00:00:00 -to $snipTime -c copy thevideo2.mp4
+    rm -fr auxVideo.flv
     theFile=thevideo2.mp4
     mycase="excp"
 else
