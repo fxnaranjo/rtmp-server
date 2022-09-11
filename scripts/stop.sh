@@ -171,10 +171,12 @@ then
             cp $finalVideo $newVideo
             fi
 
+            echo "Creating Photo:"$newPhoto
             ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
+
             echo "........................................................."
-            ls -ltr >> fix.log
+            ls -ltr >> stop.log
             echo "........................................................."
             
             rm -fr $finalVideo
