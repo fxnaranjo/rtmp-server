@@ -105,7 +105,7 @@ then
 else
 
           fecha=$(date);
-          echo $fecha "Video Rejected because user or camera is already active:"$user $streamId $idLive >> rejected.log
+          echo $fecha "Video Rejected because user or camera is already active:"$user $streamId $idLive >> /rtmp-server/scripts/rejected.log
           echo "nook";
 
 

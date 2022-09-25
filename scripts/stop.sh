@@ -92,7 +92,7 @@ then
         hora=0
         sobrante=0
 
-        if [ $numFiles -ne 3 ] && [ $tiempo -gt 2 ]
+        if [ $numFiles -ne 4 ] && [ $tiempo -gt 2 ]
         then
         tiempo=$(($tiempo-2))
         fi
@@ -120,7 +120,7 @@ then
 
         echo "SnipTime:"$snipTime >> stop.log
 
-        if [ $numFiles -ne 3 ]
+        if [ $numFiles -ne 4 ]
         then
             echo "This video have multiple flv files" > fix.log
             echo "This video have multiple flv files" >> stop.log
@@ -142,7 +142,7 @@ then
         echo ".............THE FILE............" >> stop.log
         echo $theFile >> stop.log
 
-        if [ "$theFile" != "" ] && [ $numFilesVal -ne 1 ]
+        if [ "$theFile" != "" ] && [ $numFilesVal -ne 2 ]
         then
 
             extension=".flv"
