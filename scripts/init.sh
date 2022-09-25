@@ -40,6 +40,18 @@ then
 
           fi
 
+          cd /videos/clubs/$clubname/$camera/$user/$streamId
+
+          echo "No live for camera or user" >> init.log
+          echo $clubname >> init.log
+          echo $camera >> init.log
+          echo $port >> init.log
+          echo $port2 >> init.log
+          echo $tiempo >> init.log
+          echo $user >> init.log
+          echo $private >> init.log
+          echo $description >> init.log
+
           videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
           photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
 
@@ -47,9 +59,13 @@ then
 
           docker run --name $dockerName -p $port:1935 -p $port2:8000 -v $videoPath:/myvideos -d fxnaranjom/club1:1 >> /dev/null
 
+           echo "Docker Created" >> init.log
+
           initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
           streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
+
+           echo "streamingUrl:"$streamingUrl >> init.log
 
 
           PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
@@ -59,6 +75,7 @@ then
           PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
           VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"')";
 
+          echo "Database registry created" >> init.log
 
           #HOUR_MINUTES=60;
           EXTRA_MINUTES=1;
@@ -88,7 +105,7 @@ then
 else
 
           fecha=$(date);
-          echo $fecha "Video Rejected because user is already active:"$user $streamId >> /rtmp-server/scripts/rejected.log
+          echo $fecha "Video Rejected because user or camera is already active:"$user $streamId $idLive >> rejected.log
           echo "nook";
 
 

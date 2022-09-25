@@ -151,13 +151,15 @@ then
 
             extension3=".jpg"
 
-            videoTime=$(date +"%d%m%Y%H%M%S")
+            myRecordId=$(echo $record | awk -F- '{print $4}')
 
-            finalVideo=$user-$videoTime$extension
+            echo "myRecordId:"$myRecordId >> stop.log
 
-            newVideo=$user-$videoTime$extension2
+            finalVideo=$user-$myRecordId$extension
 
-            newPhoto=$user-$videoTime$extension3
+            newVideo=$user-$myRecordId$extension2
+
+            newPhoto=$user-$myRecordId$extension3
 
 
             mv /videos/clubs/$clubname/$camera/$user/$record/$theFile  /videos/clubs/$clubname/$camera/$user/$record/$finalVideo
