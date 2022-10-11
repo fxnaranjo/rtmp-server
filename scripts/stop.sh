@@ -126,6 +126,7 @@ then
             echo "This video have multiple flv files" >> stop.log
             ls -ltr >> fix.log
             theFile=$(du -sh * | sort -rh | head -1 | awk '{print $2}')
+            echo "The largest file is:"$theFile >> stop.log
             echo $theFile >> fix.log
             echo $snipTime >> fix.log
             mv $theFile auxVideo.flv
