@@ -63,9 +63,10 @@ then
 
           initialTime=$(date +"%m-%d-%Y %H:%M:%S");
 
+
           streamingUrl="https://streaming.sportpro.tv:"$port2"/hls/stream.m3u8"
 
-           echo "streamingUrl:"$streamingUrl >> init.log
+          echo "streamingUrl:"$streamingUrl >> init.log
 
 
           PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
@@ -101,6 +102,19 @@ then
           fecha=$(date);
 
           echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /rtmp-server/scripts/active.log
+
+
+          #COUNTERX=1;
+          #minutex=$( date --date='+'$COUNTERX' minutes' +"%M" );
+          #hourx=$( date --date='+'$COUNTERX' minutes' +"%H" );
+          #write out current crontab
+          #crontab -l > /rtmp-server/scripts/mycron
+          #echo new cron into cron file
+          #echo $minutex $hourx" * * * sh /rtmp-server/scripts/killDocker.sh" $clubname $camera $user $streamId >> /rtmp-server/scripts/mycron
+          #install new cron file
+          #crontab /rtmp-server/scripts/mycron
+          #rm /rtmp-server/scripts/mycron
+          
 
 else
 

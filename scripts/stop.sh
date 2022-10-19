@@ -9,11 +9,9 @@ tiempo=$5
 
 cd /videos/clubs/$clubname/$camera/$user/$record
 
-numFilesVal=$(ls -l | wc -l)
-
  myTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-echo "*************************************************************************************************" >> stop.log
+echo "********************************************************************************************************************************" >> stop.log
         echo "Fecha:"$myTime >> stop.log
         echo "Record:"$record >> stop.log
         echo "Tiempo:"$tiempo >> stop.log
@@ -35,7 +33,7 @@ then
         if [ "$tiempo" = "" ]
         then
             echo "Stop Type: manualStop" >> stop.log
-            tiempo=40
+            
             initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
             actualTime=$(date +"%Y-%m-%d %H:%M:%S");
 
@@ -48,18 +46,13 @@ then
         
             tiempo=$MINUTES
 
-            echo "Tiempo:"$tiempo
 
-            if [ $tiempo -eq 0 ]
-            then
-                tiempo=1
-            fi
         else
             echo "Stop Type: normalStop" >> stop.log
         fi
 
 
-        echo "Tiempo despues de calculo:"$tiempo >> stop.log
+        echo "Tiempo de grabacion:"$tiempo >> stop.log
 
 
 
@@ -82,45 +75,19 @@ then
         if [ "$isValid" != "" ]
         then
 
+        numFiles=$(ls -1 *.flv 2>/dev/null | wc -l)
 
-        numFiles=$(ls -l | wc -l)
-
-        echo "NumFiles:"$numFiles >> stop.log
+         echo "Number of FLV Files:"$numFiles >> stop.log
+       
 
         theFile="myfile"
 
-        hora=0
-        sobrante=0
-
-        if [ $numFiles -ne 4 ] && [ $tiempo -gt 2 ]
-        then
-        tiempo=$(($tiempo-2))
-        fi
-
-        if [ $tiempo -gt 60 ]
-        then
-        hora=1
-        sobrante=$(($tiempo-60))
-        tiempo=$sobrante
-        fi
-
-        STRLENGTH=$(echo -n $tiempo | wc -m)
-
-        if [ $STRLENGTH -eq 1 ]
-        then
-        tiempo="0"$tiempo
-        else
-        echo "Time is right"
-
-        fi
-
+     
         mycase="normal"
 
-        snipTime="0$hora:"$tiempo":00"
+    
 
-        echo "SnipTime:"$snipTime >> stop.log
-
-        if [ $numFiles -ne 4 ]
+        if [ $numFiles -gt 1 ]
         then
             echo "This video have multiple flv files" > fix.log
             echo "This video have multiple flv files" >> stop.log
@@ -128,22 +95,37 @@ then
             theFile=$(du -sh * | sort -rh | head -1 | awk '{print $2}')
             echo "The largest file is:"$theFile >> stop.log
             echo $theFile >> fix.log
-            echo $snipTime >> fix.log
             mv $theFile auxVideo.flv
             rm -fr stream-*
-            ffmpeg -i auxVideo.flv -map 0 -ss 00:00:00 -to $snipTime -c copy thevideo2.mp4
+            ffmpeg -i auxVideo.flv -vcodec copy thevideo2.mp4
             rm -fr auxVideo.flv
+
+            #################################################################################3
+            #a=1;
+            #for file in `ls -tr *.flv`; do
+                #mv $file $a.flv
+                #echo "file '"$a.flv"'" >> inputs.txt
+                #a=$((a+1))	
+            #done
+            #ffmpeg -f concat -i inputs.txt -c copy thevideo2.mp4
+            #rm -fr *.flv
+            #################################################################################
+
             theFile=thevideo2.mp4
             mycase="excp"
         else
             theFile=$(ls stream*)
-            echo "This video have only one flv file" >> stop.log
+            if [ $numFiles -eq 1 ]
+            then
+                 echo "This video have only one flv file" >> stop.log
+            fi
+           
         fi
 
         echo ".............THE FILE............" >> stop.log
         echo $theFile >> stop.log
 
-        if [ "$theFile" != "" ] && [ $numFilesVal -ne 2 ]
+        if [ "$theFile" != "" ] && [ $numFiles -ne 0 ]
         then
 
             extension=".flv"
@@ -222,7 +204,6 @@ then
 
         else
             echo "No container available" >> stop.log
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
             PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
         fi
 else
@@ -230,6 +211,10 @@ else
         echo "Stop Type: manualStop" >> stop.log
         echo "No hay registro el tabla live 2" >> stop.log
         echo "*************************************************************************************************" >> stop.log
+        dockerName=$clubname-$camera-$user
+        isValid=$(docker stop $dockerName)
+        docker rm $dockerName
+        echo "RecordID:"$record >> stop.log
 
 fi
 
