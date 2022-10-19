@@ -159,22 +159,14 @@ then
             cp $finalVideo $newVideo
             fi
 
-            echo "Creating Photo:"$newPhoto >> stop.log
-            ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
+            cp $newVideo /library/$clubname/
 
-
+            echo "Creating VIDEO DONE" >> stop.log
             echo "....................................................................................." >> stop.log
             ls -ltrh >> stop.log
             echo "....................................................................................." >> stop.log
-            
-            rm -fr $finalVideo
 
-            cp $newVideo /library/$clubname/
-            cp $newPhoto /library/$clubname/
-
-            rm -fr $newVideo
-            rm -fr $newPhoto
-
+            ########################### DATABASE ACTIONS #####################################################
 
             googleCloudStorage="https://storage.googleapis.com/"$clubname"/"$newVideo;
 
@@ -190,8 +182,26 @@ then
 
             echo "TABLE LIVE2 RECORD DELETED" >> stop.log
 
+            ########################### DATABASE ACTIONS #####################################################
 
             sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
+
+            echo "Creating Photo:"$newPhoto >> stop.log
+            ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
+
+            echo "Creating PHOTO DONE" >> stop.log
+            echo "....................................................................................." >> stop.log
+            ls -ltrh >> stop.log
+            echo "....................................................................................." >> stop.log
+            
+            rm -fr $finalVideo
+
+            
+            cp $newPhoto /library/$clubname/
+
+            rm -fr $newVideo
+            rm -fr $newPhoto
+      
 
             echo "FINISHED STOP SCRIPT PROCESSING" >> stop.log
             echo "*************************************************************************************************" >> stop.log
