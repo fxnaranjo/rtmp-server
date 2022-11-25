@@ -12,45 +12,59 @@ videoTime=$(date +"%d%m%Y%H%M%S");
 
 streamId=$user-$clubname-$videoTime;
 
+
+#######################  FOLDER ACTIONS  ##########################
+if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
+then
+
+     mkdir -p /videos/clubs/$clubname/$camera/$user
+     chmod -R 777 /videos/clubs/$clubname/$camera/$user
+
+fi
+
+if [ ! -d /videos/clubs/$clubname/$camera/$user/$streamId ]
+then
+
+     mkdir -p /videos/clubs/$clubname/$camera/$user/$streamId
+     chmod -R 777 /videos/clubs/$clubname/$camera/$user/$streamId
+
+fi
+
+cd /videos/clubs/$clubname/$camera/$user/$streamId
+
+echo "**********************************************************" >> init.log
+echo "THE STREAMING IS BEING INITIATED" >> init.log
+echo "Clubname:"$clubname >> init.log
+echo "Camera:"$camera >> init.log
+echo "Port1:"$port >> init.log
+echo "Port2:"$port2 >> init.log
+echo "Time:"$tiempo >> init.log
+echo "Username:"$user >> init.log
+echo "isPrivate:"$private >> init.log
+echo "Description:"$description >> init.log
+echo "----------------------------------------------------" >> init.log
+
 #######################  DATABASE ACTIONS  ##########################
 idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
 idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
+echo "idCamera:"$idCamera >> init.log
+echo "idPlayer:"$idPlayer >> init.log
 
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_camera='$idCamera)
 
+
+echo "idLive:"$idLive >> init.log
+echo "----------------------------------------------------" >> init.log
+
 if [ "$idLive" = "" ]
 then
 
-          if [ ! -d /videos/clubs/$clubname/$camera/$user ] 
-          then
+          
 
-               mkdir -p /videos/clubs/$clubname/$camera/$user
-               chmod -R 777 /videos/clubs/$clubname/$camera/$user
-
-          fi
-
-
-          if [ ! -d /videos/clubs/$clubname/$camera/$user/$streamId ]
-          then
-
-               mkdir -p /videos/clubs/$clubname/$camera/$user/$streamId
-               chmod -R 777 /videos/clubs/$clubname/$camera/$user/$streamId
-
-          fi
-
-          cd /videos/clubs/$clubname/$camera/$user/$streamId
-
-          echo "No live for camera or user" >> init.log
-          echo $clubname >> init.log
-          echo $camera >> init.log
-          echo $port >> init.log
-          echo $port2 >> init.log
-          echo $tiempo >> init.log
-          echo $user >> init.log
-          echo $private >> init.log
-          echo $description >> init.log
+          echo "No live for camera or user, continue to docker start" >> init.log
+          
 
           videoPath=/videos/clubs/$clubname/$camera/$user/$streamId
           photoPath=https://storage.googleapis.com/$clubname/$clubname-live-photo-$camera.jpg
@@ -103,6 +117,9 @@ then
 
           echo $dockerName $port $port2 $tiempo $fecha $videoPath >> /rtmp-server/scripts/active.log
 
+          echo "STREAMING INIT SUCCESSFULLY" >> init.log
+
+          echo "**********************************************************" >> init.log
 
           #COUNTERX=1;
           #minutex=$( date --date='+'$COUNTERX' minutes' +"%M" );
@@ -119,7 +136,7 @@ then
 else
 
           fecha=$(date);
-          echo $fecha "Video Rejected because user or camera is already active:"$user $streamId $idLive >> /rtmp-server/scripts/rejected.log
+          echo $fecha "Video Rejected because user or camera is already active:"$user $streamId $idLive >> init.log
           echo "nook";
 
 

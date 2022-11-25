@@ -201,13 +201,30 @@ then
 
             rm -fr $newVideo
             rm -fr $newPhoto
-      
+
+            echo "VERIFIYING API SERVER............" >> stop.log
+
+            apiServer=$(ps -e | grep node | awk '{print $4}')
+
+
+            if [ "$apiServer" != "node" ]
+            then
+                cd /api/apistream/
+                npm start server.js &
+                cd /videos/clubs/$clubname/$camera/$user/$record
+                echo "THE API SERVER WAS STOPPED......RUNNING NOW" >> stop.log
+            else
+                echo "THE API SERVER WAS RUNNING" >> stop.log
+
+            fi
+
 
             echo "FINISHED STOP SCRIPT PROCESSING" >> stop.log
             echo "*************************************************************************************************" >> stop.log
 
         else
             echo "No video available" >> stop.log
+            echo "No Connection" >> cameraError.log
             PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
             PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
         fi
@@ -218,7 +235,6 @@ then
         fi
 else
 
-        echo "Stop Type: manualStop" >> stop.log
         echo "No hay registro el tabla live 2" >> stop.log
         echo "*************************************************************************************************" >> stop.log
         dockerName=$clubname-$camera-$user
