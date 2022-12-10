@@ -7,11 +7,12 @@ user=$6
 private=$7
 description=$8
 videoPath=$9
+categoria=$10
 
 tiempo=1
 cd /library/$clubname
 
-echo "*****************************************************************************************" >> hl.log
+echo "************************************************************************************************************************" >> hl.log
 echo $clubname >> hl.log
 echo $highlight >> hl.log
 echo $port >> hl.log
@@ -22,6 +23,7 @@ echo $user >> hl.log
 echo $private >> hl.log
 echo $description >> hl.log
 echo $videoPath >> hl.log
+echo $categoria >> hl.log
 
 
 extension1=".mp4"
@@ -80,14 +82,14 @@ future2=$(date -d "$future + $c seconds" --iso-8601=seconds)
 
 endTime=$( date -d "$future2" +"%m-%d-%Y %H:%M:%S");
 
-PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,ishighlight,isprivate,isrecorded,videopath,photopath,islive)
- VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",'\"$endTime\"',true,"$private",true,'"$googleCloudStorage"','"$googleCloudStorage2"',false)"
+PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,ishighlight,isprivate,isrecorded,videopath,photopath,islive,id_highlightcat)
+ VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",'\"$endTime\"',true,"$private",true,'"$googleCloudStorage"','"$googleCloudStorage2"',false,$categoria)"
 
 echo "Record ID:"$streamId >> hl.log
 echo "Record Initial Time:"$initialTime >> hl.log
 
 
-echo "*****************************************************************************************" >> hl.log
+echo "************************************************************************************************************************" >> hl.log
 
 
 
