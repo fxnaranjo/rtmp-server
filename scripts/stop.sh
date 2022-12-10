@@ -21,7 +21,7 @@ echo "**************************************************************************
 
 #######################  DATABASE ACTIONS  ##########################
 
-idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.liveid from stream.live2 l where l.liveid='"$record"'")
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT l.liveid from stream.live2 l where l.liveid='"$record"'")
 
 echo "idLive:"$idLive >> stop.log
 
@@ -34,7 +34,7 @@ then
         then
             echo "Stop Type: manualStop" >> stop.log
             
-            initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
+            initialTime=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT l.initialtime from stream.live l where l.id='"$record"'")
             actualTime=$(date +"%Y-%m-%d %H:%M:%S");
 
             echo "InitialTime:"$initialTime >> stop.log
@@ -174,11 +174,11 @@ then
 
             endTime=$(date +"%m-%d-%Y %H:%M:%S");
 
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', photopath='"$googleCloudStorage2"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
+            PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "UPDATE stream.live set islive = false , videopath='"$googleCloudStorage"', photopath='"$googleCloudStorage2"', endtime='\"$endTime\"' where STREAM.live.id ='"$record"'"
 
             echo "TABLE LIVE UPDATED" >> stop.log
 
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+            PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
 
             echo "TABLE LIVE2 RECORD DELETED" >> stop.log
 
@@ -225,13 +225,13 @@ then
         else
             echo "No video available" >> stop.log
             echo "No Connection" >> cameraError.log
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+            PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live where STREAM.live.id ='"$record"'"
+            PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
         fi
 
         else
             echo "No container available" >> stop.log
-            PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
+            PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "DELETE FROM stream.live2 where STREAM.live2.liveid ='"$record"'"
         fi
 else
 

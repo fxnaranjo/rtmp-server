@@ -42,8 +42,8 @@ echo "New Video:"$newVideo >> hl.log
 echo "New Photo:"$newPhoto >> hl.log
 
 #######################  DATABASE ACTIONS  ##########################
-idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
-idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
+idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
+idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
 echo idCamera:$idCamera >> hl.log
 echo idPlayer:$idPlayer >> hl.log
@@ -82,7 +82,7 @@ future2=$(date -d "$future + $c seconds" --iso-8601=seconds)
 
 endTime=$( date -d "$future2" +"%m-%d-%Y %H:%M:%S");
 
-PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,ishighlight,isprivate,isrecorded,videopath,photopath,islive,id_highlightcat)
+PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,ishighlight,isprivate,isrecorded,videopath,photopath,islive,id_highlightcat)
  VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",'\"$endTime\"',true,"$private",true,'"$googleCloudStorage"','"$googleCloudStorage2"',false,$categoria)"
 
 echo "Record ID:"$streamId >> hl.log

@@ -45,14 +45,14 @@ echo "Description:"$description >> init.log
 echo "----------------------------------------------------" >> init.log
 
 #######################  DATABASE ACTIONS  ##########################
-idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
-idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
+idCamera=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT c.id from stream.camera c where c.liveport='$port)
+idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
 echo "idCamera:"$idCamera >> init.log
 echo "idPlayer:"$idPlayer >> init.log
 
-idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
-idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_camera='$idCamera)
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_camera='$idCamera)
 
 
 echo "idLive:"$idLive >> init.log
@@ -83,11 +83,11 @@ then
           echo "streamingUrl:"$streamingUrl >> init.log
 
 
-          PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
+          PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live (id, id_camera, id_player,description,initialtime,playingtime,endtime,islive,isprivate,isrecorded,streamingurl,photopath,videopath)
           VALUES('"$streamId"',"$idCamera","$idPlayer",'\"$description\"','\"$initialTime\"',"$tiempo",null,true,"$private",true,'"$streamingUrl"','"$photoPath"',null)"
 
 
-          PGPASSWORD=F020kw31xx! psql -h 10.70.208.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
+          PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "INSERT INTO stream.live2 (liveid, id_camera, id_player,streamingurl)
           VALUES('"$streamId"',"$idCamera","$idPlayer",'"$streamingUrl"')";
 
           echo "Database registry created" >> init.log
