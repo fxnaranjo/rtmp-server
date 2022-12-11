@@ -7,7 +7,7 @@ user=$6
 private=$7
 description=$8
 videoPath=$9
-categoria=$10
+categoria=${10}
 
 tiempo=1
 cd /library/$clubname
