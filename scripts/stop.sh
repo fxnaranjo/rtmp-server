@@ -187,7 +187,7 @@ then
             sed -i '/'$dockerName'/d' /rtmp-server/scripts/active.log
 
             echo "Creating Photo:"$newPhoto >> stop.log
-            ffmpeg -i $finalVideo -r 1 -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
+            ffmpeg -i $finalVideo -ss 00:00:10 -vf scale=320:180 -t 1 $newPhoto
 
             echo "Creating PHOTO DONE" >> stop.log
             echo "....................................................................................." >> stop.log
