@@ -72,6 +72,7 @@ then
 
         echo "Valid:"$isValid >> stop.log
 
+        #THE ELSE IS AT LINE 234
         if [ "$isValid" != "" ]
         then
 
@@ -125,6 +126,7 @@ then
         echo ".............THE FILE............" >> stop.log
         echo $theFile >> stop.log
 
+        #THE ELSE IS AT LINE 227
         if [ "$theFile" != "" ] && [ $numFiles -ne 0 ]
         then
 
