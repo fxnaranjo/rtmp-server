@@ -241,6 +241,14 @@ else
         isValid=$(docker stop $dockerName)
         docker rm $dockerName
         echo "RecordID:"$record >> stop.log
+        
+        crontab -l > /rtmp-server/scripts/mycron
+
+        sed -i '/'$record'/d' /rtmp-server/scripts/mycron
+
+        crontab /rtmp-server/scripts/mycron
+
+        rm -fr /rtmp-server/scripts/mycron
 
 fi
 
