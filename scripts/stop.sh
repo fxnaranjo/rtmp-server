@@ -63,7 +63,17 @@ then
 
         crontab -l > /rtmp-server/scripts/mycron
 
-        sed -i '/'$record'/d' /rtmp-server/scripts/mycron
+        echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> stop.log
+        echo "CRON ANTES" >> stop.log
+            cat /rtmp-server/scripts/mycron >> stop.log
+
+             sed -i '/'$record'/d' /rtmp-server/scripts/mycron
+
+        echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> stop.log
+        echo "CRON DESPUES" >> stop.log
+            cat /rtmp-server/scripts/mycron >> stop.log
+
+        echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" >> stop.log
 
         crontab /rtmp-server/scripts/mycron
 
@@ -222,7 +232,7 @@ then
 
 
             echo "FINISHED STOP SCRIPT PROCESSING" >> stop.log
-            echo "*************************************************************************************************" >> stop.log
+            echo "********************************************************************************************************************************" >> stop.log
 
         else
             echo "No video available" >> stop.log
@@ -238,7 +248,7 @@ then
 else
 
         echo "No hay registro el tabla live 2" >> stop.log
-        echo "*************************************************************************************************" >> stop.log
+        echo "********************************************************************************************************************************" >> stop.log
         dockerName=$clubname-$camera-$user
         isValid=$(docker stop $dockerName)
         docker rm $dockerName
