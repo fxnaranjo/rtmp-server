@@ -222,7 +222,7 @@ then
             if [ "$apiServer" != "node" ]
             then
                 cd /api/apistream/
-                npm start server.js &
+                nohup npm start server.js &
                 cd /videos/clubs/$clubname/$camera/$user/$record
                 echo "THE API SERVER WAS STOPPED......RUNNING NOW" >> stop.log
             else
