@@ -51,11 +51,23 @@ idPlayer=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d spor
 echo "idCamera:"$idCamera >> init.log
 echo "idPlayer:"$idPlayer >> init.log
 
-idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_player='$idPlayer)
+idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l,stream.player p where l.id_player='$idPlayer' and p.id_membership <> 3 and l.id_player = p.id')
+
+echo "idLiveUser:"$idLive >> init.log
+
+if [ "$idLive" = "" ]
+then
+
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c 'SELECT l.liveid from stream.live2 l where l.id_camera='$idCamera)
 
 
-echo "idLive:"$idLive >> init.log
+fi
+
+
+
+
+
+echo "idLiveCamera:"$idLive >> init.log
 echo "----------------------------------------------------" >> init.log
 
 if [ "$idLive" = "" ]
