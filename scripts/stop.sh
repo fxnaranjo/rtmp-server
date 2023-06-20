@@ -109,7 +109,11 @@ then
             mv $theFile auxVideo.flv
             rm -fr stream-*
             ffmpeg -i auxVideo.flv -vcodec copy thevideo2.mp4
-            rm -fr auxVideo.flv
+            mp4Validation=$(ls thevideo2*)
+            if [ "$mp4Validation" != "" ]
+            then
+                rm -fr auxVideo.flv
+            fi
 
             #################################################################################3
             #a=1;
@@ -206,8 +210,11 @@ then
             ls -ltrh >> stop.log
             echo "....................................................................................." >> stop.log
             
-            rm -fr $finalVideo
-
+            mp4Validation=$(ls *.mp4)
+            if [ "$mp4Validation" != "" ]
+            then
+                rm -fr $finalVideo
+            fi
             
             cp $newPhoto /library/$clubname/
 
