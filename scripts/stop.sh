@@ -22,8 +22,21 @@ echo "**************************************************************************
 #######################  DATABASE ACTIONS  ##########################
 
 idLive=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT l.liveid from stream.live2 l where l.liveid='"$record"'")
+userMail=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT p.email from stream.player p where p.username='"$user"'")
+userID=$(PGPASSWORD=F020kw31xx! psql -h 10.246.0.3 -A -t -U sportprodb -d sportpro -c "SELECT p.id from stream.player p where p.username='"$user"'")
 
 echo "idLive:"$idLive >> stop.log
+
+
+if [ "$userMail" == "" ]
+then
+    $userMail='contact@sportpro.tv';
+
+fi
+
+
+echo "User Mail:"$userMail >> stop.log
+echo "User ID:"$userID >> stop.log
 
 if [ "$idLive" != "" ]
 then
@@ -213,13 +226,31 @@ then
             mp4Validation=$(ls *.mp4)
             if [ "$mp4Validation" != "" ]
             then
-                rm -fr $finalVideo
+                if [ -e /library/$clubname/$newVideo ]
+                then
+                    echo "File exists in bucket" >> stop.log
+                    rm -fr $finalVideo
+                else
+                    echo "File does not exists in bucket" >> stop.log
+                fi
             fi
-            
+
             cp $newPhoto /library/$clubname/
 
             rm -fr $newVideo
             rm -fr $newPhoto
+
+             echo "SENDING EMAIL............" >> stop.log
+
+             userURL='userURL'
+             if [ "$userID" != "" ]
+                then      
+                    userURL='https://sportpro.tv/?user='$userID
+                else
+                    userURL='https://sportpro.tv'
+                fi
+             echo "USER URL ............"$userURL >> stop.log
+             node /mail/sendMail.js -m fxnaranjo@gmail.com -url $userURL
 
             echo "VERIFIYING API SERVER............" >> stop.log
 
